@@ -18,7 +18,21 @@ test("sinaliza modelo poderoso demais", () => {
   const result = recommendModel({ request: "Erro reproduzível no login", models, selectedModelId: "large", policy: "guarded", repository: { reproducible: true } });
   assert.equal(result.selectionAssessment, "overpowered");
   assert.equal(result.shouldSwitch, true);
+  assert.equal(result.switchMode, "confirmation");
   assert.equal(result.recommendedModel?.id, "small");
+});
+
+test("auto é a política padrão e não pede confirmação", () => {
+  const result = recommendModel({ request: "Erro reproduzível no login", models, selectedModelId: "large", repository: { reproducible: true } });
+  assert.equal(result.effectivePolicy, "auto");
+  assert.equal(result.switchMode, "automatic");
+  assert.equal(result.requiresConfirmation, false);
+});
+
+test("manual preserva recomendação sem troca", () => {
+  const result = recommendModel({ request: "Erro reproduzível no login", models, selectedModelId: "large", policy: "manual", repository: { reproducible: true } });
+  assert.equal(result.switchMode, "recommendation");
+  assert.equal(result.requiresConfirmation, false);
 });
 
 test("usa modelo poderoso em arquitetura", () => {

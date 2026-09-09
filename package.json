@@ -7,7 +7,8 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "test": "npm run build && node --test dist/*.test.js",
-    "check": "npm run build && npm test"
+    "check": "npm run build && npm test && npm run eval",
+    "eval": "npm run build && node dist/evaluate.js"
   },
   "keywords": [],
   "author": "",
