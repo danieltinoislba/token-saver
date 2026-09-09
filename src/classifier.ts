@@ -61,14 +61,15 @@ export function classifyTask(input: ClassifyTaskInput): TaskClassification {
     }
   }
   const repository = input.repository;
+  const hasBugEvidence = /\b(erro|error|falha|bug|exception|timeout|quebrou|race condition|deadlock)\b/.test(text);
   if (repository?.reproducible === true) {
     scores.bug_simple += 2;
     reasonsByMode.bug_simple.push("falha informada como reproduzível");
-  } else if (repository?.reproducible === false) {
+  } else if (repository?.reproducible === false && hasBugEvidence) {
     scores.bug_complex += 3;
     reasonsByMode.bug_complex.push("falha informada como não reproduzível");
   }
-  if ((repository?.services?.length ?? 0) > 1) {
+  if ((repository?.services?.length ?? 0) > 1 && hasBugEvidence) {
     scores.bug_complex += 2;
     scores.architecture += 1;
     reasonsByMode.bug_complex.push("mais de um serviço envolvido");

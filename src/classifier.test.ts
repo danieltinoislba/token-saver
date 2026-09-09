@@ -33,3 +33,11 @@ test("não força classificação sem evidência", () => {
 test("normaliza português com acentos", () => {
   assert.equal(classifyTask({ request: "Falha de concorrência com vazamento de memória" }).mode, "bug_complex");
 });
+
+test("não confunde implementação distribuída com bug sem evidência de falha", () => {
+  const result = classifyTask({
+    request: "Implementar o context planner para vários serviços",
+    repository: { reproducible: false, services: ["mcp-core", "adapter"] },
+  });
+  assert.equal(result.mode, "implementation");
+});
