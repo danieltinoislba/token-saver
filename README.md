@@ -16,9 +16,11 @@ Ele recomenda um nível (`economy`, `balanced` ou `powerful`), esforço de
 raciocínio, limite de saída e gatilhos de escalonamento. O núcleo não contém
 nomes fixos de fornecedores e nunca recomenda um modelo fora do catálogo.
 
-As políticas suportadas são `advisory`, `guarded` e `enforced`. O MCP informa
-`shouldSwitch`; somente um cliente ou adaptador capaz de controlar a sessão pode
-executar a troca de modelo.
+As políticas suportadas são `auto`, `guarded` e `manual` (com `advisory` e
+`enforced` mantidos como aliases). `auto` é o padrão: quando o adaptador controla
+a sessão, ele deve trocar automaticamente; `guarded` exige confirmação; `manual`
+apenas recomenda. O MCP informa `switchMode` e `shouldSwitch`, mas a execução
+efetiva depende do cliente ou adaptador.
 
 ## Desenvolvimento
 

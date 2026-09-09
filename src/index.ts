@@ -3,6 +3,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import * as z from "zod/v4";
 import { classifyTask } from "./classifier.js";
 import { modelTiers, recommendModel } from "./model-recommender.js";
+import { planContext } from "./context-planner.js";
 
 const server = new McpServer({
   name: "token-saver",
@@ -35,6 +36,38 @@ server.registerTool(
 );
 
 server.registerTool(
+  "plan_context",
+  {
+    title: "Planejar contexto",
+    description: "Seleciona arquivos, símbolos e trechos relevantes dentro de um orçamento de tokens, sem ler o repositório inteiro.",
+    inputSchema: {
+      request: z.string().min(1),
+      mode: z.enum(["bug_simple", "bug_complex", "architecture", "implementation", "unknown"]).optional(),
+      budgetTokens: z.number().int().positive().optional(),
+      maxItems: z.number().int().positive().optional(),
+      candidates: z.array(z.object({
+        id: z.string().min(1),
+        path: z.string().min(1),
+        kind: z.enum(["file", "symbol", "snippet"]),
+        summary: z.string(),
+        content: z.string().optional(),
+        relevance: z.number().min(0).max(1),
+        estimatedTokens: z.number().int().positive(),
+        dependencies: z.array(z.string()).optional(),
+      })).min(1),
+    },
+    annotations: { readOnlyHint: true, openWorldHint: false },
+  },
+  async (input) => {
+    const result = planContext(input);
+    return {
+      content: [{ type: "text", text: JSON.stringify(result) }],
+      structuredContent: { ...result },
+    };
+  },
+);
+
+server.registerTool(
   "recommend_model",
   {
     title: "Recomendar modelo",
@@ -57,7 +90,7 @@ server.registerTool(
       })).min(1),
       requiredCapabilities: z.array(z.string()).optional(),
       selectedModelId: z.string().optional(),
-      policy: z.enum(["advisory", "guarded", "enforced"]).optional(),
+      policy: z.enum(["auto", "guarded", "manual", "advisory", "enforced"]).optional(),
     },
     annotations: { readOnlyHint: true, openWorldHint: false },
   },
