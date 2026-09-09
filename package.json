@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "test": "npm run build && node --test dist/classifier.test.js",
+    "test": "npm run build && node --test dist/*.test.js",
     "check": "npm run build && npm test"
   },
   "keywords": [],
