@@ -17,7 +17,7 @@ test("servidor inicia, lista e executa as ferramentas via stdio", async () => {
     const listed = await client.listTools();
     assert.deepEqual(
       listed.tools.map((tool) => tool.name).sort(),
-      ["classify_task", "recommend_model"],
+      ["classify_task", "plan_context", "recommend_model"],
     );
 
     const classification = await client.callTool({
@@ -42,6 +42,18 @@ test("servidor inicia, lista e executa as ferramentas via stdio", async () => {
       (recommendation.structuredContent as { recommendedModel?: { id?: string } } | undefined)?.recommendedModel?.id,
       "economico",
     );
+
+    const plan = await client.callTool({
+      name: "plan_context",
+      arguments: {
+        request: "Erro no login",
+        mode: "bug_simple",
+        budgetTokens: 100,
+        candidates: [{ id: "login", path: "src/login.ts", kind: "snippet", summary: "login", relevance: 1, estimatedTokens: 80 }],
+      },
+    });
+    assert.equal(plan.isError, undefined);
+    assert.equal((plan.structuredContent as { selected?: unknown[] } | undefined)?.selected?.length, 1);
   } finally {
     await client.close();
   }

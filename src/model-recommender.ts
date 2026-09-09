@@ -3,7 +3,8 @@ import { classifyTask } from "./classifier.js";
 
 export const modelTiers = ["economy", "balanced", "powerful", "specialized"] as const;
 export type ModelTier = (typeof modelTiers)[number];
-export type RoutingPolicy = "advisory" | "guarded" | "enforced";
+export type RoutingPolicy = "auto" | "guarded" | "manual" | "advisory" | "enforced";
+export type SwitchMode = "automatic" | "confirmation" | "recommendation";
 
 export interface ModelCandidate {
   id: string;
@@ -30,6 +31,9 @@ export interface ModelRecommendation {
   selectionAssessment: "appropriate" | "overpowered" | "underpowered" | "unavailable" | "not_provided";
   shouldSwitch: boolean;
   policy: RoutingPolicy;
+  effectivePolicy: "auto" | "guarded" | "manual";
+  switchMode: SwitchMode;
+  requiresConfirmation: boolean;
   reasons: string[];
   escalationTriggers: string[];
 }
@@ -107,13 +111,19 @@ export function recommendModel(input: RecommendModelInput): ModelRecommendation 
     selectionAssessment = delta > 0 ? "overpowered" : delta < 0 ? "underpowered" : "appropriate";
   }
 
-  const policy = input.policy ?? "advisory";
+  const policy = input.policy ?? "auto";
+  const effectivePolicy: "auto" | "guarded" | "manual" = policy === "enforced" || policy === "auto"
+    ? "auto"
+    : policy === "advisory" || policy === "manual" ? "manual" : "guarded";
   const shouldSwitch = Boolean(
     input.selectedModelId
     && recommendedModel
     && recommendedModel.id !== input.selectedModelId
     && selectionAssessment !== "appropriate",
   );
+  const switchMode: SwitchMode = effectivePolicy === "auto"
+    ? "automatic"
+    : effectivePolicy === "guarded" ? "confirmation" : "recommendation";
   const reasons = [
     `tarefa classificada como ${classification.mode}`,
     `nível ${route.tier} é suficiente para esta classe de tarefa`,
@@ -131,6 +141,9 @@ export function recommendModel(input: RecommendModelInput): ModelRecommendation 
     selectionAssessment,
     shouldSwitch,
     policy,
+    effectivePolicy,
+    switchMode,
+    requiresConfirmation: switchMode === "confirmation",
     reasons,
     escalationTriggers: route.escalationTriggers,
   };
