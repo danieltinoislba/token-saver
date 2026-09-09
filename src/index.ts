@@ -8,6 +8,8 @@ import { planContext } from "./context-planner.js";
 const server = new McpServer({
   name: "token-saver",
   version: "0.1.0",
+}, {
+  instructions: "Classifique a tarefa antes de explorar o repositório. Use plan_context para limitar contexto e recommend_model para selecionar o menor nível suficiente. A política auto só pode trocar o modelo quando o cliente fornecer um adaptador de sessão.",
 });
 
 server.registerTool(
