@@ -31,3 +31,9 @@ Antes de iniciar, execute `npm run build`.
 
 Os pesos e orçamentos atuais são hipóteses iniciais. Eles deverão ser calibrados
 com um conjunto de tarefas reais e métricas de resolução por token consumido.
+
+## Avaliações
+
+`npm run eval` executa o dataset versionado em `evals/cases.json`, mostra
+acurácia por modo e nível, matriz de confusão e casos divergentes. O comando
+falha se a acurácia cair abaixo de 85%.
