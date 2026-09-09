@@ -6,8 +6,9 @@ sidebar_position: 4
 
 ## Integração MCP portátil
 
-Qualquer cliente compatível pode chamar `classify_task` e `recommend_model`. Essa
-modalidade é consultiva porque o MCP pode não controlar a sessão do cliente.
+Qualquer cliente compatível pode chamar `classify_task`, `recommend_model` e
+`plan_context`. Sem um adaptador que controle a sessão, a recomendação é
+consultiva.
 
 ## Adaptadores opcionais
 
@@ -24,12 +25,15 @@ Adaptadores devem:
 
 1. consultar os modelos realmente disponíveis;
 2. enviar esse catálogo ao roteador;
-3. aplicar a recomendação somente se o cliente permitir;
-4. preservar a escolha do usuário quando a política for `advisory`;
-5. registrar recomendação, escolha efetiva e resultado da tarefa.
+3. aplicar a troca automaticamente com a política `auto`;
+4. pedir confirmação com `guarded`;
+5. preservar a escolha do usuário com `manual`;
+6. registrar recomendação, escolha efetiva e resultado da tarefa.
 
 ## Codex
 
-O suporte ao Codex será um adaptador opcional. O núcleo permanecerá utilizável
-por outros clientes, e o adaptador não deverá codificar uma lista permanente de
-modelos: disponibilidade e nomes precisam vir do ambiente atual.
+O suporte ao Codex é um adaptador opcional. Ele não codifica uma lista permanente
+de modelos: disponibilidade e nomes vêm do ambiente atual por `listModels()`.
+
+O cliente precisa reiniciar ou recarregar o catálogo MCP depois de instalar uma
+versão nova do servidor. No Codex, `/mcp` mostra o estado da conexão.

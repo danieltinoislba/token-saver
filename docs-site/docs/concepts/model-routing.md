@@ -15,11 +15,13 @@ O núcleo trabalha com níveis universais, não com nomes de fornecedores:
 
 | Política | Comportamento esperado do adaptador |
 | --- | --- |
-| `advisory` | mostra ou registra a recomendação |
-| `guarded` | alerta quando a escolha é desproporcional |
-| `enforced` | troca automaticamente quando o cliente oferece esse controle |
+| `auto` | troca automaticamente quando o cliente controla a sessão |
+| `guarded` | pede confirmação antes de trocar |
+| `manual` | apenas informa a recomendação |
 
-O MCP sempre retorna `shouldSwitch`, mas não afirma que realizou a troca.
+`advisory` e `enforced` continuam aceitos como aliases de `manual` e `auto`.
+O MCP retorna `shouldSwitch`, `switchMode` e `requiresConfirmation`; o adaptador
+é responsável por executar a decisão.
 
 ## Seleção
 
@@ -35,3 +37,17 @@ vez de inventar uma alternativa.
 Uma tarefa começa no menor nível considerado suficiente. Gatilhos específicos,
 como testes ainda falhando ou descoberta de vários serviços envolvidos, permitem
 subir de nível de forma explícita.
+
+## Adaptador Codex
+
+O adaptador Codex implementa um contrato de sessão com três operações:
+
+```text
+listModels() → catálogo disponível
+getSelectedModelId() → modelo atual
+switchModel(id) → troca da sessão
+```
+
+Com `auto`, o adaptador chama `switchModel` antes da execução principal. O MCP
+não altera diretamente a sessão do Codex; essa separação permite testar o núcleo
+e manter compatibilidade com clientes que não oferecem troca programática.

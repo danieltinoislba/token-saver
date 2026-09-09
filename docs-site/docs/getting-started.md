@@ -52,3 +52,14 @@ adequado, esforço de raciocínio, limite de saída e gatilhos de escalonamento.
 
 O catálogo deve vir do cliente; isso impede recomendações de modelos inexistentes
 ou indisponíveis para aquela conta.
+
+### `plan_context`
+
+Recebe candidatos já encontrados pelo cliente e seleciona arquivos, símbolos e
+trechos dentro do orçamento. O servidor não varre o filesystem automaticamente.
+
+## Troca automática
+
+Para executar `auto`, o cliente precisa fornecer um adaptador de sessão capaz de
+listar modelos, informar o modelo atual e trocar o modelo. Sem essa capacidade,
+use `guarded` ou `manual` e trate a resposta como recomendação.
