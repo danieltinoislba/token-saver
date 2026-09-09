@@ -1,0 +1,34 @@
+---
+sidebar_position: 1
+---
+
+# Token Saver MCP
+
+O Token Saver ajuda agentes de desenvolvimento a usar contexto, ferramentas e
+modelos proporcionais ao trabalho solicitado.
+
+Ele distingue tarefas como um bug localizado, uma investigação complexa ou uma
+decisão de arquitetura antes que o agente leia dezenas de arquivos ou use um
+modelo mais caro que o necessário.
+
+## O que ele faz
+
+- classifica a tarefa de maneira determinística e explicável;
+- recomenda um orçamento de contexto;
+- recomenda um nível de modelo e esforço de raciocínio;
+- considera apenas modelos declarados pelo cliente;
+- informa quando escalar a investigação;
+- não chama outro LLM para tomar a decisão inicial.
+
+## O que ele não faz
+
+O protocolo MCP não garante que um servidor possa trocar o modelo ativo. O
+Token Saver retorna uma recomendação e `shouldSwitch`; aplicar a troca depende
+do cliente ou de um adaptador de orquestração.
+
+## Estado do projeto
+
+O projeto está em fase inicial. Os pesos, limites e gatilhos atuais são hipóteses
+que serão calibradas por avaliações com tarefas reais.
+
+[Instale e execute o servidor →](./getting-started)
