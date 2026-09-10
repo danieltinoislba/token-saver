@@ -82,25 +82,28 @@ export class CodexRunner {
     }
 
     const modelId = recommendation.recommendedModel.id;
-    const thread = await this.options.transport.request<AppServerThread>("thread/start", {
+    const threadResponse = await this.options.transport.request<{ thread: AppServerThread }>("thread/start", {
       model: modelId,
       cwd: input.cwd,
     });
-    const turn = await this.options.transport.request<AppServerTurn>("turn/start", {
+    const thread = threadResponse.thread;
+    const turnResponse = await this.options.transport.request<{ turn: AppServerTurn }>("turn/start", {
       threadId: thread.id,
       model: modelId,
-      reasoningEffort: recommendation.reasoningEffort,
-      input: input.request,
+      effort: recommendation.reasoningEffort,
+      input: [{ type: "text", text: input.request }],
     });
+    const turn = turnResponse.turn;
     return { recommendation, thread, turn, modelId };
   }
 
   async startTurn(threadId: string, request: string, modelId: string, reasoningEffort: string): Promise<AppServerTurn> {
-    return this.options.transport.request<AppServerTurn>("turn/start", {
+    const response = await this.options.transport.request<{ turn: AppServerTurn }>("turn/start", {
       threadId,
       model: modelId,
-      reasoningEffort,
-      input: request,
+      effort: reasoningEffort,
+      input: [{ type: "text", text: request }],
     });
+    return response.turn;
   }
 }

@@ -8,8 +8,8 @@ test("runner consulta modelos e inicia thread/turn com modelo econômico", async
     async request<T>(method: string, params: Record<string, unknown>): Promise<T> {
       calls.push(`${method}:${JSON.stringify(params)}`);
       if (method === "model/list") return { data: [{ id: "gpt-economy" }, { id: "gpt-powerful" }] } as T;
-      if (method === "thread/start") return { id: "thread-1" } as T;
-      return { id: "turn-1", status: "inProgress" } as T;
+      if (method === "thread/start") return { thread: { id: "thread-1" } } as T;
+      return { turn: { id: "turn-1", status: "inProgress" } } as T;
     },
   };
   const runner = new CodexRunner({
