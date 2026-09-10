@@ -4,6 +4,7 @@ import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import Heading from '@theme/Heading';
+import '@fontsource/press-start-2p/400.css';
 
 import styles from './index.module.css';
 
@@ -19,7 +20,7 @@ function HomepageHeader() {
         <p className={clsx('hero__subtitle', styles.heroSubtitle)}>{siteConfig.tagline}</p>
         <div className={styles.buttons}>
           <Link
-            className={clsx('button button--secondary button--lg', styles.startButton)}
+            className={styles.startButton}
             to="/docs/intro">
             Começar
           </Link>
