@@ -6,6 +6,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
+    "codex": "npm run build && node dist/codex-cli.js",
     "test": "npm run build && node --test dist/*.test.js",
     "check": "npm run build && npm test && npm run eval",
     "eval": "npm run build && node dist/evaluate.js"

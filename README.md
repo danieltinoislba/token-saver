@@ -27,6 +27,7 @@ efetiva depende do cliente ou adaptador.
 ```shell
 npm test
 npm start
+npm run codex -- "Como rodar este projeto?"
 ```
 
 Antes de iniciar, execute `npm run build`.
@@ -39,3 +40,10 @@ com um conjunto de tarefas reais e métricas de resolução por token consumido.
 `npm run eval` executa o dataset versionado em `evals/cases.json`, mostra
 acurácia por modo e nível, matriz de confusão e casos divergentes. O comando
 falha se a acurácia cair abaixo de 85%.
+
+## Runner Codex
+
+`npm run codex -- "seu pedido"` inicia o Codex App Server por `stdio`, consulta
+`model/list`, escolhe o modelo pelo Token Saver e inicia `thread/start` e
+`turn/start`. O comando requer o executável `codex` autenticado e disponível no
+PATH. O runner é uma integração separada do servidor MCP portátil.
