@@ -20,7 +20,7 @@ const sidebars: SidebarsConfig = {
     {
       type: 'category',
       label: 'Como funciona',
-      items: ['concepts/task-classification', 'concepts/model-routing', 'concepts/context-planner'],
+      items: ['concepts/task-classification', 'concepts/model-routing', 'concepts/context-planner', 'concepts/extreme-optimization'],
     },
     'client-integration',
     'codex-automation',
