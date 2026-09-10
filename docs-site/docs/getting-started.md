@@ -53,10 +53,22 @@ adequado, esforço de raciocínio, limite de saída e gatilhos de escalonamento.
 O catálogo deve vir do cliente; isso impede recomendações de modelos inexistentes
 ou indisponíveis para aquela conta.
 
+### `discover_context`
+
+Recebe um pedido e procura apenas os caminhos locais mais relevantes. Depois
+abre um conjunto pequeno de arquivos, com limite de tamanho, para montar os
+candidatos de contexto.
+
 ### `plan_context`
 
 Recebe candidatos já encontrados pelo cliente e seleciona arquivos, símbolos e
-trechos dentro do orçamento. O servidor não varre o filesystem automaticamente.
+trechos dentro do orçamento.
+
+### `run_routed_task`
+
+Inicia uma nova task no Codex App Server. Ela seleciona modelo e esforço,
+descobre contexto mínimo e aguarda a execução terminar. Como o agente pode
+alterar arquivos, use-a apenas com autorização explícita do usuário.
 
 ## Troca automática
 

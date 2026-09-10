@@ -5,8 +5,8 @@ import type * as Preset from '@docusaurus/preset-classic';
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-  title: 'Token Saver MCP',
-  tagline: 'Contexto e modelos proporcionais à complexidade da tarefa',
+  title: 'Token Saver',
+  tagline: 'Menos contexto. Modelo certo. Agentes mais eficientes.',
   favicon: 'img/favicon.ico',
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
@@ -57,8 +57,8 @@ const config: Config = {
     navbar: {
       title: 'Token Saver',
       logo: {
-        alt: 'Token Saver MCP',
-        src: 'img/logo.svg',
+        alt: 'Baú dourado do Token Saver',
+        src: 'img/token-saver-hero.png',
       },
       items: [
         {
@@ -79,6 +79,10 @@ const config: Config = {
               label: 'Começar',
               to: '/docs/intro',
             },
+            {
+              label: 'Uso diário',
+              to: '/docs/daily-use',
+            },
           ],
         },
         {
@@ -91,6 +95,10 @@ const config: Config = {
             {
               label: 'Roteamento de modelos',
               to: '/docs/concepts/model-routing',
+            },
+            {
+              label: 'Automação Codex',
+              to: '/docs/codex-automation',
             },
           ],
         },

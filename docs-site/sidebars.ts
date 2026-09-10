@@ -16,12 +16,14 @@ const sidebars: SidebarsConfig = {
   developerSidebar: [
     'intro',
     'getting-started',
+    'daily-use',
     {
       type: 'category',
       label: 'Como funciona',
       items: ['concepts/task-classification', 'concepts/model-routing', 'concepts/context-planner'],
     },
     'client-integration',
+    'codex-automation',
     'contributing',
   ],
 };

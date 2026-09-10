@@ -12,6 +12,7 @@ function HomepageHeader() {
   return (
     <header className={clsx('hero hero--primary', styles.heroBanner)}>
       <div className="container">
+        <img className={styles.heroImage} src="/img/token-saver-hero.png" alt="Token Saver: um baú de tokens" />
         <Heading as="h1" className="hero__title">
           {siteConfig.title}
         </Heading>
@@ -21,6 +22,9 @@ function HomepageHeader() {
             className="button button--secondary button--lg"
             to="/docs/intro">
             Começar
+          </Link>
+          <Link className="button button--outline button--lg" to="/docs/daily-use">
+            Ver uso diário
           </Link>
         </div>
       </div>
@@ -39,8 +43,8 @@ export default function Home(): ReactNode {
         <div className="container">
           <h2>Menos contexto desperdiçado. Capacidade quando realmente importa.</h2>
           <p>
-            Classifique a tarefa, selecione o nível de modelo e escale somente
-            quando as evidências exigirem — sem prender a solução a um cliente.
+            Entenda a task primeiro. Envie só o contexto necessário. Use o
+            menor modelo que resolve — e escale quando há evidência.
           </p>
         </div>
       </main>
