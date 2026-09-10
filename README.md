@@ -47,3 +47,9 @@ falha se a acurácia cair abaixo de 85%.
 `model/list`, escolhe o modelo pelo Token Saver e inicia `thread/start` e
 `turn/start`. O comando requer o executável `codex` autenticado e disponível no
 PATH. O runner é uma integração separada do servidor MCP portátil.
+
+Para economizar contexto de verdade, clientes que usam o runner podem fornecer
+`contextCandidates` (arquivos, símbolos ou trechos com relevância e custo
+estimado). Antes de iniciar o turno, o runner chama `planContext` e anexa apenas
+os itens selecionados dentro do orçamento. Sem candidatos, o pedido é enviado
+inalterado: o runner não lê nem transmite arquivos do repositório sozinho.
