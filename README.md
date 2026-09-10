@@ -54,6 +54,11 @@ seleciona automaticamente modelo e esforço e retorna o resultado ao concluir.
 O cliente precisa ter o executável `codex` autenticado no PATH; como a task pode
 editar arquivos, só chame essa ferramenta com autorização explícita do usuário.
 
+`discover_context` cria candidatos locais sem carregar o repositório inteiro:
+primeiro classifica os caminhos por relevância e depois lê apenas os mais
+relevantes, com limites de tamanho. `run_routed_task` usa essa descoberta por
+padrão quando o cliente não fornece candidatos.
+
 Para economizar contexto de verdade, clientes que usam o runner podem fornecer
 `contextCandidates` (arquivos, símbolos ou trechos com relevância e custo
 estimado). Antes de iniciar o turno, o runner chama `planContext` e anexa apenas

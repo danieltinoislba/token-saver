@@ -5,6 +5,7 @@ import { classifyTask } from "./classifier.js";
 import { modelTiers, recommendModel } from "./model-recommender.js";
 import { planContext } from "./context-planner.js";
 import { runRoutedTask } from "./routed-task.js";
+import { discoverRepositoryContext } from "./repository-discovery.js";
 
 const repositorySchema = z.object({
   changedFiles: z.array(z.string()).optional(),
@@ -101,6 +102,20 @@ server.registerTool(
 );
 
 server.registerTool(
+  "discover_context",
+  {
+    title: "Descobrir contexto local mínimo",
+    description: "Lista e lê somente os arquivos locais mais relevantes para o pedido, sem carregar o repositório inteiro.",
+    inputSchema: { request: z.string().min(1), cwd: z.string().min(1).optional(), maxCandidates: z.number().int().positive().max(100).optional() },
+    annotations: { readOnlyHint: true, openWorldHint: false },
+  },
+  async (input) => {
+    const result = discoverRepositoryContext(input);
+    return { content: [{ type: "text", text: JSON.stringify(result) }], structuredContent: { candidates: result } };
+  },
+);
+
+server.registerTool(
   "run_routed_task",
   {
     title: "Executar task roteada no Codex",
@@ -110,6 +125,7 @@ server.registerTool(
       repository: repositorySchema.optional(),
       contextCandidates: z.array(contextCandidateSchema).optional(),
       contextBudgetTokens: z.number().int().positive().optional(),
+      discoverContext: z.boolean().optional(),
       cwd: z.string().min(1).optional(),
       timeoutMs: z.number().int().positive().max(600_000).optional(),
     },

@@ -2,6 +2,7 @@ import type { ContextCandidate } from "./context-planner.js";
 import type { RepositorySignals } from "./classifier.js";
 import { CodexRunner, type AppServerModel, type AppServerTurn, type JsonRpcTransport, type RunCodexTaskResult } from "./codex-runner.js";
 import { JsonRpcStdioTransport } from "./jsonrpc-stdio.js";
+import { discoverRepositoryContext } from "./repository-discovery.js";
 
 export interface RoutedTaskTransport extends JsonRpcTransport {
   start(): Promise<void>;
@@ -14,6 +15,7 @@ export interface RunRoutedTaskInput {
   repository?: RepositorySignals;
   contextCandidates?: ContextCandidate[];
   contextBudgetTokens?: number;
+  discoverContext?: boolean;
   cwd?: string;
   timeoutMs?: number;
 }
@@ -39,10 +41,11 @@ export async function runRoutedTask(input: RunRoutedTaskInput, options: RoutedTa
   try {
     await transport.start();
     const runner = new CodexRunner({ transport, tierForModel: tierForCodexModel, provider: "openai" });
+    const contextCandidates = input.contextCandidates ?? (input.discoverContext === false ? undefined : discoverRepositoryContext({ request: input.request, cwd: input.cwd }));
     const result = await runner.run({
       request: input.request,
       repository: input.repository,
-      contextCandidates: input.contextCandidates,
+      contextCandidates,
       contextBudgetTokens: input.contextBudgetTokens,
       cwd: input.cwd,
       policy: "auto",

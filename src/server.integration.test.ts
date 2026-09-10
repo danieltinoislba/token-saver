@@ -17,7 +17,7 @@ test("servidor inicia, lista e executa as ferramentas via stdio", async () => {
     const listed = await client.listTools();
     assert.deepEqual(
       listed.tools.map((tool) => tool.name).sort(),
-      ["classify_task", "plan_context", "recommend_model", "run_routed_task"],
+      ["classify_task", "discover_context", "plan_context", "recommend_model", "run_routed_task"],
     );
 
     const classification = await client.callTool({
