@@ -11,9 +11,11 @@ const candidates: ContextCandidate[] = [
 
 test("seleciona maior relevância sem ultrapassar orçamento", () => {
   const result = planContext({ request: "Erro reproduzível no login", mode: "bug_simple", candidates, budgetTokens: 300 });
-  assert.deepEqual(result.selected.map((item) => item.id), ["a", "b"]);
-  assert.equal(result.estimatedTokens, 250);
-  assert.equal(result.excludedCount, 2);
+  assert.deepEqual(result.selected.slice(0, 2).map((item) => item.id), ["a", "b"]);
+  assert.equal(result.selected.find((item) => item.id === "c")?.includedAs, "summary");
+  assert.equal(result.estimatedTokens, 258);
+  assert.equal(result.estimatedInputTokens, 258);
+  assert.equal(result.excludedCount, 0);
 });
 
 test("arquitetura privilegia arquivos e retorna resumos", () => {
@@ -30,4 +32,39 @@ test("expõe dependências como próximas consultas", () => {
 test("limita quantidade de itens", () => {
   const result = planContext({ request: "Implementar feature", candidates, budgetTokens: 10_000, maxItems: 2 });
   assert.equal(result.selected.length, 2);
+});
+
+test("inclui resumo quando o conteúdo não cabe no orçamento", () => {
+  const result = planContext({
+    request: "Entender wiring",
+    mode: "implementation",
+    budgetTokens: 10,
+    candidates: [{
+      id: "large",
+      path: "src/wiring.ts",
+      kind: "file",
+      summary: "app wiring",
+      content: "conteúdo extenso",
+      relevance: 1,
+      estimatedTokens: 900,
+    }],
+  });
+  assert.equal(result.selected[0]?.includedAs, "summary");
+  assert.equal(result.selected[0]?.transmittedTokens, 3);
+  assert.equal(result.estimatedInputTokens, 3);
+  assert.equal(result.estimatedTokensSaved, 897);
+});
+
+test("nunca ultrapassa o orçamento usando custo efetivamente transmitido", () => {
+  const result = planContext({
+    request: "Arquitetar sistema",
+    mode: "architecture",
+    budgetTokens: 6,
+    candidates: [
+      { id: "one", path: "a.ts", kind: "file", summary: "four words fit here", relevance: 1, estimatedTokens: 800 },
+      { id: "two", path: "b.ts", kind: "file", summary: "another long summary", relevance: .9, estimatedTokens: 700 },
+    ],
+  });
+  assert.ok(result.estimatedInputTokens <= result.budgetTokens);
+  assert.equal(result.estimatedInputTokens, result.selected.reduce((sum, item) => sum + item.transmittedTokens, 0));
 });

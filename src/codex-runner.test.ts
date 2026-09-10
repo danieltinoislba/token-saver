@@ -61,6 +61,7 @@ test("runner envia somente o contexto selecionado dentro do orçamento", async (
   });
   const text = (turnParams?.input as Array<{ text: string }>)[0]?.text;
   assert.match(text, /src\/login\.ts/);
-  assert.doesNotMatch(text, /src\/all\.ts/);
-  assert.equal(result.contextPlan?.estimatedTokensSaved, 100);
+  assert.match(text, /src\/all\.ts \(summary\)/);
+  assert.doesNotMatch(text, new RegExp("x{20}"));
+  assert.equal(result.contextPlan?.estimatedTokensSaved, 97);
 });

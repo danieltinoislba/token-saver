@@ -25,11 +25,15 @@ export interface PlanContextInput {
 export interface SelectedContext extends ContextCandidate {
   includedAs: "content" | "summary";
   rank: number;
+  /** Tokens do payload efetivamente enviado ao modelo. */
+  transmittedTokens: number;
 }
 
 export interface ContextPlan {
   mode: TaskMode;
   budgetTokens: number;
+  /** Alias explícito para observabilidade do custo real de entrada. */
+  estimatedInputTokens: number;
   estimatedTokens: number;
   selected: SelectedContext[];
   excludedCount: number;
@@ -47,15 +51,35 @@ const defaultBudgets: Record<TaskMode, number> = {
 };
 
 function modeWeight(mode: TaskMode, kind: ContextCandidateKind): number {
-  if (mode === "architecture") return kind === "file" ? 1.2 : kind === "symbol" ? 0.9 : 0.75;
+  if (mode === "architecture") return kind === "file" ? 2 : kind === "symbol" ? 0.9 : 0.75;
   if (mode === "bug_simple") return kind === "snippet" ? 1.15 : kind === "symbol" ? 1.05 : 0.75;
   if (mode === "bug_complex") return kind === "symbol" ? 1.1 : kind === "file" ? 1 : 0.95;
   return kind === "symbol" ? 1.05 : 1;
 }
 
-function compactCandidate(candidate: ContextCandidate, mode: TaskMode, budgetRemaining: number): SelectedContext {
-  const includeContent = Boolean(candidate.content && candidate.estimatedTokens <= budgetRemaining && mode !== "architecture");
-  return { ...candidate, includedAs: includeContent ? "content" : "summary", rank: 0 };
+function estimateTextTokens(text: string): number {
+  return Math.max(1, Math.ceil(text.length / 4));
+}
+
+function preferredTransmission(candidate: ContextCandidate, mode: TaskMode): {
+  includedAs: SelectedContext["includedAs"];
+  transmittedTokens: number;
+} {
+  if (candidate.content && mode !== "architecture") {
+    return { includedAs: "content", transmittedTokens: candidate.estimatedTokens };
+  }
+  return { includedAs: "summary", transmittedTokens: estimateTextTokens(candidate.summary) };
+}
+
+function compactCandidate(candidate: ContextCandidate, mode: TaskMode, budgetRemaining: number): SelectedContext | null {
+  const preferred = preferredTransmission(candidate, mode);
+  if (preferred.transmittedTokens <= budgetRemaining) {
+    return { ...candidate, ...preferred, rank: 0 };
+  }
+
+  const summaryTokens = estimateTextTokens(candidate.summary);
+  if (summaryTokens > budgetRemaining) return null;
+  return { ...candidate, includedAs: "summary", transmittedTokens: summaryTokens, rank: 0 };
 }
 
 export function planContext(input: PlanContextInput): ContextPlan {
@@ -66,19 +90,24 @@ export function planContext(input: PlanContextInput): ContextPlan {
     .map((candidate) => ({
       candidate,
       score: Math.max(0, Math.min(1, candidate.relevance)) * modeWeight(classifiedMode, candidate.kind),
+      transmission: preferredTransmission(candidate, classifiedMode),
     }))
-    .sort((a, b) => b.score - a.score || a.candidate.estimatedTokens - b.candidate.estimatedTokens || a.candidate.id.localeCompare(b.candidate.id));
+    .sort((a, b) => {
+      const aUtility = a.score / a.transmission.transmittedTokens;
+      const bUtility = b.score / b.transmission.transmittedTokens;
+      return bUtility - aUtility || b.score - a.score || a.candidate.id.localeCompare(b.candidate.id);
+    });
 
   const selected: SelectedContext[] = [];
   let estimatedTokens = 0;
   for (const { candidate } of candidates) {
     if (selected.length >= maxItems) break;
     const remaining = budgetTokens - estimatedTokens;
-    if (candidate.estimatedTokens > remaining) continue;
     const item = compactCandidate(candidate, classifiedMode, remaining);
+    if (!item) continue;
     item.rank = selected.length + 1;
     selected.push(item);
-    estimatedTokens += candidate.estimatedTokens;
+    estimatedTokens += item.transmittedTokens;
   }
 
   const selectedIds = new Set(selected.map((item) => item.id));
@@ -90,10 +119,11 @@ export function planContext(input: PlanContextInput): ContextPlan {
   return {
     mode: classifiedMode,
     budgetTokens,
+    estimatedInputTokens: estimatedTokens,
     estimatedTokens,
     selected,
     excludedCount: excluded.length,
-    estimatedTokensSaved: excluded.reduce((sum, item) => sum + item.candidate.estimatedTokens, 0),
+    estimatedTokensSaved: input.candidates.reduce((sum, item) => sum + item.estimatedTokens, 0) - estimatedTokens,
     nextQueries,
     reasons: [
       `prioridade ajustada para ${classifiedMode}`,

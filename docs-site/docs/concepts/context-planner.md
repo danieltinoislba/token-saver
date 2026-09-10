@@ -29,4 +29,8 @@ APIs específicas de cada ambiente.
 - implementação usa um equilíbrio entre símbolos e arquivos.
 
 A resposta inclui os itens selecionados, tokens estimados, tokens economizados,
-dependências que merecem novas consultas e os itens excluídos.
+dependências que merecem novas consultas e os itens excluídos. O orçamento usa
+`transmittedTokens`, isto é, o tamanho do payload realmente enviado. Se o
+conteúdo integral não couber, o planner ainda pode incluir seu resumo curto sem
+cobrar o tamanho original do arquivo. `estimatedInputTokens` mostra a soma
+efetiva e nunca excede `budgetTokens`.
