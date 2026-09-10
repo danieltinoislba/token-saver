@@ -1,6 +1,6 @@
 {
   "name": "token-saver",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "MCP que adapta contexto e estratégia à complexidade de tarefas de desenvolvimento.",
   "main": "dist/index.js",
   "bin": {
