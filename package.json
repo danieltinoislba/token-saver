@@ -1,8 +1,14 @@
 {
   "name": "token-saver",
-  "version": "1.0.0",
+  "version": "0.1.1",
   "description": "MCP que adapta contexto e estratégia à complexidade de tarefas de desenvolvimento.",
   "main": "dist/index.js",
+  "bin": {
+    "token-saver": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
@@ -11,7 +17,11 @@
     "check": "npm run build && npm test && npm run eval",
     "eval": "npm run build && node dist/evaluate.js"
   },
-  "keywords": [],
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "codex"
+  ],
   "author": "",
   "license": "ISC",
   "type": "module",
