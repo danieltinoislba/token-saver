@@ -8,8 +8,8 @@ test("runner consulta modelos e inicia thread/turn com modelo econômico", async
     async request<T>(method: string, params: Record<string, unknown>): Promise<T> {
       calls.push(`${method}:${JSON.stringify(params)}`);
       if (method === "model/list") return { data: [{ id: "gpt-economy" }, { id: "gpt-powerful" }] } as T;
-      if (method === "thread/start") return { id: "thread-1" } as T;
-      return { id: "turn-1", status: "inProgress" } as T;
+      if (method === "thread/start") return { thread: { id: "thread-1" } } as T;
+      return { turn: { id: "turn-1", status: "inProgress" } } as T;
     },
   };
   const runner = new CodexRunner({
@@ -38,4 +38,29 @@ test("runner não inicia sessão em modo manual sem confirmação", async () => 
   const runner = new CodexRunner({ transport, tierForModel: (model) => model.id === "gpt-economy" ? "economy" : "powerful" });
   await assert.rejects(() => runner.run({ request: "Erro reproduzível", selectedModelId: "gpt-powerful", policy: "manual", repository: { reproducible: true } }));
   assert.equal(calls, 1);
+});
+
+test("runner envia somente o contexto selecionado dentro do orçamento", async () => {
+  let turnParams: Record<string, unknown> | undefined;
+  const transport: JsonRpcTransport = {
+    async request<T>(method: string, params: Record<string, unknown>): Promise<T> {
+      if (method === "model/list") return { data: [{ id: "gpt-economy" }] } as T;
+      if (method === "thread/start") return { thread: { id: "thread-1" } } as T;
+      turnParams = params;
+      return { turn: { id: "turn-1" } } as T;
+    },
+  };
+  const runner = new CodexRunner({ transport, tierForModel: () => "economy" });
+  const result = await runner.run({
+    request: "Corrigir login",
+    contextBudgetTokens: 20,
+    contextCandidates: [
+      { id: "login", path: "src/login.ts", kind: "file", summary: "login", content: "const login = true;", relevance: 1, estimatedTokens: 10 },
+      { id: "large", path: "src/all.ts", kind: "file", summary: "não incluir", content: "x".repeat(100), relevance: 0.9, estimatedTokens: 100 },
+    ],
+  });
+  const text = (turnParams?.input as Array<{ text: string }>)[0]?.text;
+  assert.match(text, /src\/login\.ts/);
+  assert.doesNotMatch(text, /src\/all\.ts/);
+  assert.equal(result.contextPlan?.estimatedTokensSaved, 100);
 });

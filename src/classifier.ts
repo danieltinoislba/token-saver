@@ -42,7 +42,7 @@ const rules: Array<{ mode: ScoredMode; points: number; reason: string; pattern: 
   { mode: "bug_simple", points: 3, reason: "falha concreta e localizada", pattern: /\b(erro|error|falha|bug|exception|retorna 500|quebrou)\b/ },
   { mode: "bug_simple", points: 2, reason: "reprodução ou localização indicada", pattern: /\b(reproduz|sempre acontece|arquivo|linha|stack trace|componente)\w*/ },
   { mode: "bug_simple", points: 1, reason: "regressão recente", pattern: /\b(regress|depois da ultima mudanca|parou de funcionar)\w*/ },
-  { mode: "implementation", points: 3, reason: "pedido explícito de implementação", pattern: /\b(implement|adicion|crie|criar|constru|refator|endpoint|feature)\w*/ },
+  { mode: "implementation", points: 3, reason: "pedido explícito de implementação", pattern: /\b(implement|integr|adicion|crie|criar|constru|refator|endpoint|feature)\w*/ },
   { mode: "bug_simple", points: 2, reason: "operação simples de projeto", pattern: /\b(como rodar|como executar|iniciar o projeto|instalar dependencias)\b/ },
 ];
 
@@ -62,7 +62,7 @@ export function classifyTask(input: ClassifyTaskInput): TaskClassification {
   }
   const repository = input.repository;
   const hasBugEvidence = /\b(erro|error|falha|bug|exception|timeout|quebrou|race condition|deadlock)\b/.test(text);
-  if (repository?.reproducible === true) {
+  if (repository?.reproducible === true && hasBugEvidence) {
     scores.bug_simple += 2;
     reasonsByMode.bug_simple.push("falha informada como reproduzível");
   } else if (repository?.reproducible === false && hasBugEvidence) {

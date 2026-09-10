@@ -41,3 +41,11 @@ test("não confunde implementação distribuída com bug sem evidência de falha
   });
   assert.equal(result.mode, "implementation");
 });
+
+test("reprodução sem sintoma não transforma implementação em bug", () => {
+  const result = classifyTask({
+    request: "Integrar o planejamento de contexto ao runner Codex",
+    repository: { reproducible: true, changedFiles: ["src/runner.ts", "src/context.ts"] },
+  });
+  assert.equal(result.mode, "implementation");
+});

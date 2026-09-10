@@ -1,5 +1,6 @@
 import { recommendModel, type ModelCandidate, type ModelRecommendation } from "./model-recommender.js";
 import type { RepositorySignals } from "./classifier.js";
+import { planContext, type ContextCandidate, type ContextPlan } from "./context-planner.js";
 
 export interface JsonRpcTransport {
   request<T>(method: string, params: Record<string, unknown>): Promise<T>;
@@ -35,6 +36,9 @@ export interface RunCodexTaskInput {
   requiredCapabilities?: string[];
   policy?: "auto" | "guarded" | "manual";
   cwd?: string;
+  /** Contexto local já coletado pelo cliente. O runner nunca varre o disco por conta própria. */
+  contextCandidates?: ContextCandidate[];
+  contextBudgetTokens?: number;
 }
 
 export interface RunCodexTaskResult {
@@ -42,6 +46,16 @@ export interface RunCodexTaskResult {
   thread: AppServerThread;
   turn: AppServerTurn;
   modelId: string;
+  contextPlan?: ContextPlan;
+}
+
+function withPlannedContext(request: string, plan?: ContextPlan): string {
+  if (!plan || plan.selected.length === 0) return request;
+  const context = plan.selected.map((item) => {
+    const body = item.includedAs === "content" && item.content ? item.content : item.summary;
+    return `--- ${item.path} (${item.includedAs}) ---\n${body}`;
+  }).join("\n\n");
+  return `${request}\n\nContexto selecionado pelo Token Saver (use apenas quando relevante):\n${context}`;
 }
 
 export class CodexRunner {
@@ -82,25 +96,37 @@ export class CodexRunner {
     }
 
     const modelId = recommendation.recommendedModel.id;
-    const thread = await this.options.transport.request<AppServerThread>("thread/start", {
+    const contextPlan = input.contextCandidates
+      ? planContext({
+        request: input.request,
+        candidates: input.contextCandidates,
+        mode: recommendation.classification.mode,
+        budgetTokens: input.contextBudgetTokens,
+      })
+      : undefined;
+    const turnInput = withPlannedContext(input.request, contextPlan);
+    const threadResponse = await this.options.transport.request<{ thread: AppServerThread }>("thread/start", {
       model: modelId,
       cwd: input.cwd,
     });
-    const turn = await this.options.transport.request<AppServerTurn>("turn/start", {
+    const thread = threadResponse.thread;
+    const turnResponse = await this.options.transport.request<{ turn: AppServerTurn }>("turn/start", {
       threadId: thread.id,
       model: modelId,
-      reasoningEffort: recommendation.reasoningEffort,
-      input: input.request,
+      effort: recommendation.reasoningEffort,
+      input: [{ type: "text", text: turnInput }],
     });
-    return { recommendation, thread, turn, modelId };
+    const turn = turnResponse.turn;
+    return { recommendation, thread, turn, modelId, contextPlan };
   }
 
   async startTurn(threadId: string, request: string, modelId: string, reasoningEffort: string): Promise<AppServerTurn> {
-    return this.options.transport.request<AppServerTurn>("turn/start", {
+    const response = await this.options.transport.request<{ turn: AppServerTurn }>("turn/start", {
       threadId,
       model: modelId,
-      reasoningEffort,
-      input: request,
+      effort: reasoningEffort,
+      input: [{ type: "text", text: request }],
     });
+    return response.turn;
   }
 }
