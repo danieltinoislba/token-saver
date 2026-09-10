@@ -6,25 +6,102 @@
 
 /* You can override the default Infima variables here. */
 :root {
-  --ifm-color-primary: #2e8555;
-  --ifm-color-primary-dark: #29784c;
-  --ifm-color-primary-darker: #277148;
-  --ifm-color-primary-darkest: #205d3b;
-  --ifm-color-primary-light: #33925d;
-  --ifm-color-primary-lighter: #359962;
-  --ifm-color-primary-lightest: #3cad6e;
+  --ifm-color-primary: #2563eb;
+  --ifm-color-primary-dark: #1d4ed8;
+  --ifm-color-primary-darker: #1e40af;
+  --ifm-color-primary-darkest: #172554;
+  --ifm-color-primary-light: #3b82f6;
+  --ifm-color-primary-lighter: #60a5fa;
+  --ifm-color-primary-lightest: #bfdbfe;
+  --ifm-background-color: #f8fafc;
+  --ifm-background-surface-color: #ffffff;
+  --ifm-navbar-background-color: #ffffff;
+  --ifm-footer-background-color: #0f172a;
+  --ifm-font-color-base: #111827;
+  --ifm-heading-color: #0f172a;
+  --ifm-link-color: #1d4ed8;
+  --ifm-menu-color-active: #1d4ed8;
+  --ifm-toc-link-color: #475569;
+  --ifm-card-background-color: #ffffff;
+  --ifm-color-emphasis-200: #dbe3ef;
+  --ifm-color-emphasis-300: #c8d3e2;
   --ifm-code-font-size: 95%;
+  --ifm-code-background: #eef4ff;
+  --token-saver-gold: #f7b928;
+  --token-saver-gold-strong: #d99000;
+  --token-saver-ink: #0f172a;
+  --token-saver-muted: #475569;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
 }
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */
 [data-theme='dark'] {
-  --ifm-color-primary: #25c2a0;
-  --ifm-color-primary-dark: #21af90;
-  --ifm-color-primary-darker: #1fa588;
-  --ifm-color-primary-darkest: #1a8870;
-  --ifm-color-primary-light: #29d5b0;
-  --ifm-color-primary-lighter: #32d8b4;
-  --ifm-color-primary-lightest: #4fddbf;
+  --ifm-color-primary: #60a5fa;
+  --ifm-color-primary-dark: #3b82f6;
+  --ifm-color-primary-darker: #2563eb;
+  --ifm-color-primary-darkest: #1d4ed8;
+  --ifm-color-primary-light: #93c5fd;
+  --ifm-color-primary-lighter: #bfdbfe;
+  --ifm-color-primary-lightest: #dbeafe;
+  --ifm-background-color: #090d16;
+  --ifm-background-surface-color: #111827;
+  --ifm-navbar-background-color: #0b1120;
+  --ifm-footer-background-color: #070a12;
+  --ifm-font-color-base: #dbe7f5;
+  --ifm-heading-color: #f8fafc;
+  --ifm-link-color: #93c5fd;
+  --ifm-menu-color-active: #93c5fd;
+  --ifm-toc-link-color: #a8b3c4;
+  --ifm-card-background-color: #111827;
+  --ifm-color-emphasis-200: #243044;
+  --ifm-color-emphasis-300: #334155;
+  --ifm-code-background: #162033;
+  --token-saver-gold: #ffc857;
+  --token-saver-gold-strong: #f7b928;
+  --token-saver-ink: #f8fafc;
+  --token-saver-muted: #a8b3c4;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}
+
+.hero--primary {
+  background:
+    radial-gradient(circle at 50% 18%, rgba(247, 185, 40, .18) 0, transparent 28%),
+    linear-gradient(180deg, #14213d 0%, #0f172a 55%, #080c14 100%);
+  border-bottom: 4px solid var(--token-saver-gold);
+}
+
+.button--secondary {
+  background: var(--token-saver-gold);
+  border-color: #ffe08a;
+  color: #0f172a;
+  box-shadow: 4px 4px 0 var(--token-saver-gold-strong);
+  font-weight: 700;
+}
+
+.button--outline {
+  border-width: 2px;
+  font-weight: 700;
+}
+
+.navbar {
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.footer {
+  color: #cbd5e1;
+}
+
+.theme-doc-markdown code {
+  border: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.theme-doc-sidebar-container,
+.table-of-contents {
+  border-color: var(--ifm-color-emphasis-200) !important;
+}
+
+[data-theme='dark'] .theme-doc-markdown table,
+[data-theme='dark'] .card {
+  border: 2px solid #263b61;
+  box-shadow: 4px 4px 0 #060912;
 }

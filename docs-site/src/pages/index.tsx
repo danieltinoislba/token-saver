@@ -4,6 +4,7 @@ import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import Heading from '@theme/Heading';
+import '@fontsource/press-start-2p/400.css';
 
 import styles from './index.module.css';
 
@@ -12,15 +13,21 @@ function HomepageHeader() {
   return (
     <header className={clsx('hero hero--primary', styles.heroBanner)}>
       <div className="container">
-        <Heading as="h1" className="hero__title">
+        <img className={styles.heroImage} src="/img/token-saver-hero.png" alt="Token Saver: um baú de tokens" />
+        <Heading as="h1" className={clsx('hero__title', styles.heroTitle)}>
           {siteConfig.title}
         </Heading>
-        <p className="hero__subtitle">{siteConfig.tagline}</p>
+        <p className={clsx('hero__subtitle', styles.heroSubtitle)}>{siteConfig.tagline}</p>
         <div className={styles.buttons}>
           <Link
-            className="button button--secondary button--lg"
+            className={styles.startButton}
             to="/docs/intro">
             Começar
+          </Link>
+          <Link
+            className={clsx('button button--outline button--lg', styles.usageButton)}
+            to="/docs/daily-use">
+            Ver uso diário
           </Link>
         </div>
       </div>
@@ -39,8 +46,8 @@ export default function Home(): ReactNode {
         <div className="container">
           <h2>Menos contexto desperdiçado. Capacidade quando realmente importa.</h2>
           <p>
-            Classifique a tarefa, selecione o nível de modelo e escale somente
-            quando as evidências exigirem — sem prender a solução a um cliente.
+            Entenda a task primeiro. Envie só o contexto necessário. Use o
+            menor modelo que resolve — e escale quando há evidência.
           </p>
         </div>
       </main>

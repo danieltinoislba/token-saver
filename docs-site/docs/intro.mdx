@@ -2,10 +2,11 @@
 sidebar_position: 1
 ---
 
-# Token Saver MCP
+# Token Saver
 
-O Token Saver ajuda agentes de desenvolvimento a usar contexto, ferramentas e
-modelos proporcionais ao trabalho solicitado.
+O Token Saver ajuda agentes de desenvolvimento a gastar menos tokens sem perder
+qualidade. Ele decide a estratégia antes de o agente abrir dezenas de arquivos
+ou usar um modelo mais potente do que a task exige.
 
 Ele distingue tarefas como um bug localizado, uma investigação complexa ou uma
 decisão de arquitetura antes que o agente leia dezenas de arquivos ou use um
@@ -20,15 +21,21 @@ modelo mais caro que o necessário.
 - informa quando escalar a investigação;
 - não chama outro LLM para tomar a decisão inicial.
 
+## Em uma frase
+
+**Entenda a task primeiro; envie só o contexto necessário; use o menor modelo que resolve.**
+
 ## O que ele não faz
 
-O protocolo MCP não garante que um servidor possa trocar o modelo ativo. O
-Token Saver retorna uma recomendação e `shouldSwitch`; aplicar a troca depende
-do cliente ou de um adaptador de orquestração.
+Em um chat comum, MCPs não trocam retroativamente o modelo já escolhido pela
+interface. Para fluxo automático, o Token Saver usa o Codex App Server e cria
+uma nova task com modelo, esforço e contexto definidos.
 
 ## Estado do projeto
 
 O projeto está em fase inicial. Os pesos, limites e gatilhos atuais são hipóteses
 que serão calibradas por avaliações com tarefas reais.
 
-[Instale e execute o servidor →](./getting-started)
+[Instale em cinco minutos →](./getting-started)
+
+[Veja o uso diário →](./daily-use)
