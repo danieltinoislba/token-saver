@@ -48,6 +48,12 @@ falha se a acurácia cair abaixo de 85%.
 `turn/start`. O comando requer o executável `codex` autenticado e disponível no
 PATH. O runner é uma integração separada do servidor MCP portátil.
 
+O MCP também expõe `run_routed_task`, que inicia o mesmo runner para clientes
+que querem delegar a execução. Ele abre uma nova thread no Codex App Server,
+seleciona automaticamente modelo e esforço e retorna o resultado ao concluir.
+O cliente precisa ter o executável `codex` autenticado no PATH; como a task pode
+editar arquivos, só chame essa ferramenta com autorização explícita do usuário.
+
 Para economizar contexto de verdade, clientes que usam o runner podem fornecer
 `contextCandidates` (arquivos, símbolos ou trechos com relevância e custo
 estimado). Antes de iniciar o turno, o runner chama `planContext` e anexa apenas
