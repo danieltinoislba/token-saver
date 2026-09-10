@@ -8,6 +8,7 @@
   text-align: center;
   position: relative;
   overflow: hidden;
+  color: #fff;
 }
 
 .heroImage {
@@ -16,6 +17,36 @@
   margin: 0 auto 1.25rem;
   image-rendering: pixelated;
   filter: drop-shadow(0 18px 32px rgba(255, 174, 0, .28));
+}
+
+.heroTitle,
+.heroSubtitle,
+.usageButton {
+  color: #fff;
+}
+
+.startButton {
+  font-family: "Courier New", "Consolas", monospace;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  text-shadow: 1px 1px 0 rgba(255, 255, 255, .42);
+}
+
+.heroTitle {
+  text-shadow: 0 4px 0 rgba(0, 0, 0, .38);
+}
+
+.heroSubtitle {
+  color: rgba(255, 255, 255, .9);
+}
+
+.usageButton {
+  border-color: rgba(255, 255, 255, .82);
+}
+
+.usageButton:hover {
+  color: #0f172a;
+  background: #fff;
 }
 
 @media screen and (max-width: 996px) {
@@ -34,10 +65,13 @@
 .summary {
   padding: 4rem 0;
   text-align: center;
+  background:
+    linear-gradient(180deg, var(--ifm-background-color), var(--ifm-background-surface-color));
 }
 
 .summary p {
   font-size: 1.2rem;
   margin: 0 auto;
   max-width: 760px;
+  color: var(--token-saver-muted);
 }

@@ -13,17 +13,19 @@ function HomepageHeader() {
     <header className={clsx('hero hero--primary', styles.heroBanner)}>
       <div className="container">
         <img className={styles.heroImage} src="/img/token-saver-hero.png" alt="Token Saver: um baú de tokens" />
-        <Heading as="h1" className="hero__title">
+        <Heading as="h1" className={clsx('hero__title', styles.heroTitle)}>
           {siteConfig.title}
         </Heading>
-        <p className="hero__subtitle">{siteConfig.tagline}</p>
+        <p className={clsx('hero__subtitle', styles.heroSubtitle)}>{siteConfig.tagline}</p>
         <div className={styles.buttons}>
           <Link
-            className="button button--secondary button--lg"
+            className={clsx('button button--secondary button--lg', styles.startButton)}
             to="/docs/intro">
             Começar
           </Link>
-          <Link className="button button--outline button--lg" to="/docs/daily-use">
+          <Link
+            className={clsx('button button--outline button--lg', styles.usageButton)}
+            to="/docs/daily-use">
             Ver uso diário
           </Link>
         </div>
